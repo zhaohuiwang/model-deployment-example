@@ -5,7 +5,8 @@
 
 ## Environment setup
 ### Poetry environment
-Create a project directory and add at least the following python libraries.
+There is venv in `/venvs/uv-venvs/pytorch` that can be used directly without creating it in this directory. The instruction is in `README.md` file inside the `pytorch` directory.
+Create a new project directory and add at least the following python libraries.
 ```Bash
 poetry add torch torchvision matplotlib seaborn 
 poetry add fastapi[standard]
