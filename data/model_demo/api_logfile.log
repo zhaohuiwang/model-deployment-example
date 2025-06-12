@@ -1,0 +1,4 @@
+06/12/2025 12:40:28 PM - src.model_demo.fast_api - INFO - Using cpu device
+06/12/2025 12:40:28 PM - src.model_demo.fast_api - INFO - Running at: /mnt/e/zhaohuiwang/dev/model-deployment-FastAPI
+06/12/2025 12:40:57 PM - src.model_demo.fast_api - INFO - Input:    X_1  X_2
+0    0    1, Prediction: -15.138586044311523

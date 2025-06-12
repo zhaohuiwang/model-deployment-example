@@ -1,0 +1,5 @@
+06/12/2025 12:38:57 PM - __main__ - INFO - Using cpu device
+06/12/2025 12:39:23 PM - __main__ - INFO - Model training accomplished!
+06/12/2025 12:39:23 PM - __main__ - INFO - Model is saved as models/model_demo/demo_model_weights.pth
+06/12/2025 12:39:23 PM - __main__ - INFO - Starting the model-demo inference
+06/12/2025 12:39:23 PM - __main__ - INFO - Inference result is saved in directory: data/model_demo
