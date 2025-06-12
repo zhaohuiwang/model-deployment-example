@@ -1,16 +1,16 @@
 
 
 
-
+## Welcome to Zhaohui Wang's ML Model Deployment Server API Demo
 
 ## Environment setup
 ### Poetry environment
 There is venv in `/venvs/uv-venvs/pytorch` that can be used directly without creating it in this directory. The instruction is in `README.md` file inside the `pytorch` directory.
 Create a new project directory and add at least the following python libraries.
 ```Bash
-poetry add torch torchvision matplotlib seaborn 
-poetry add fastapi[standard]
-poetry add requests rich
+uv add torch torchvision matplotlib seaborn 
+uv add fastapi[standard]
+uv add requests rich
 ```
 
 First, change the directory to your project `/dev/pytorch-projects`; start a VSCode  editor `code .`; you may need to activate the envoronment: `source .venv/bin/activate` (for my specific setting `source ../venvs/uv-venvs/pytorch/.venv/bin/activate`) after which you should expect `(venv-name)` at the begining of the bash/szh prompt indicating you are inside a Python environment. 
@@ -105,8 +105,8 @@ To see the prediction result from `http://localhost:8000/docs`
 ### 4. Model inference via `curl`command to send POST request
 Alternatively, use curl to execute prediction. Here are examples (optional: `&&echo` to add a blank line)
 ```Bash
-curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d '{"feature_X_1": 1.0, "feature_X_2": 2.0}'
-curl -X POST "http://localhost:8000/batch_predict" -H "Content-Type: application/json" -d '{"input_data": [[1.0, 2.0], [3.0, 4.0]]}'
+curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d '{"feature_X_1": 1.0, "feature_X_2": 2.0}' &&echo
+curl -X POST "http://localhost:8000/batch_predict" -H "Content-Type: application/json" -d '{"input_data": [[1.0, 2.0], [3.0, 4.0]]}' &&echo
 
 ```
 ![](/docs/images/curl_predict.png)

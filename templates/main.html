@@ -13,17 +13,17 @@
 </head>
 <body>
     <div class="main-header">
-        <h1>Welcome to Zhaohui Wang's Web Server API Demo</h1>
+        <h1>Welcome to Zhaohui Wang's ML Model Deployment Server API Demo</h1>
     </div>
     <div class="content">
         <ol>
         <h2>Environment setup</h2>
         <h3>Poetry environment</h3>
-        <p>Create a project directory and add at least the following python libraries.</p>
+        <p>There is venv in <code>/venvs/uv-venvs/pytorch</code> that can be used directly without creating it in this directory. The instruction is in <em>README.md</em> file inside the <strong>pytorch</strong> directory. Create a new project directory and add at least the following python libraries..</p>
         <pre><code class="language-bash">
-            poetry add torch torchvision matplotlib seaborn 
-            poetry add fastapi[standard]
-            poetry add requests rich
+            uv add torch torchvision matplotlib seaborn 
+            uv add fastapi[standard]
+            uv add requests rich
         </code></pre>
         <p>First, change the directory to your project <code>/dev/pytorch-projects</code>; start a VSCode editor <code>code .</code>; you may need to activate the environment: <code>source .venv/bin/activate</code> (for my specific setting <code>source ../venvs/uv-venvs/pytorch/.venv/bin/activate</code>) after which you should expect <code>(venv-name)</code> at the beginning of the bash/zsh prompt indicating you are inside a Python environment. You can then generate synthetic data, train a model and test the FastAPI.</p>
         <p>Here are the how the files are organized in my project directory.</p>
@@ -101,10 +101,10 @@
             (pytorch) zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python src/model_demo/submit_for_inference.py
         </code></pre>
         <p>To see the prediction result from <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>
-        <p>Alternatively, use curl to execute prediction. Here are examples</p>
+        <p>Alternatively, use curl to execute prediction. Here are examples (optional: <code>&&echo</code> to add a blank line)</p>
         <pre><code class="language-bash">
-            curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d '{"feature_X_1": 1.0, "feature_X_2": 2.0}'
-            curl -X POST "http://localhost:8000/batch_predict" -H "Content-Type: application/json" -d '{"input_data": [[1.0, 2.0], [3.0, 4.0]]}'
+            curl -X POST "http://localhost:8000/predict" -H "Content-Type: application/json" -d '{"feature_X_1": 1.0, "feature_X_2": 2.0}' &&echo
+            curl -X POST "http://localhost:8000/batch_predict" -H "Content-Type: application/json" -d '{"input_data": [[1.0, 2.0], [3.0, 4.0]]}' &&echo
         </code></pre>
         <h2>Localhost URL</h2>
         <table>
