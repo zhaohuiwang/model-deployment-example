@@ -25,7 +25,7 @@
             poetry add fastapi[standard]
             poetry add requests rich
         </code></pre>
-        <p>First, change the directory to your project <code>/dev/pytorch-projects</code>; start a VSCode editor <code>code .</code>; you may need to activate the environment: <code>source .venv/bin/activate</code> after which you should expect <code>(pytorch-projects-py3.12)</code> at the beginning of the bash/zsh prompt indicating you are inside a Python environment. You can then generate synthetic data, train a model and test the FastAPI.</p>
+        <p>First, change the directory to your project <code>/dev/pytorch-projects</code>; start a VSCode editor <code>code .</code>; you may need to activate the environment: <code>source .venv/bin/activate</code> (for my specific setting <code>source ../venvs/uv-venvs/pytorch/.venv/bin/activate</code>) after which you should expect <code>(venv-name)</code> at the beginning of the bash/zsh prompt indicating you are inside a Python environment. You can then generate synthetic data, train a model and test the FastAPI.</p>
         <p>Here are the how the files are organized in my project directory.</p>
         <pre><code class="language-bash">.
             .
@@ -61,7 +61,7 @@
         <h2>Data Preparation</h2>
         <p>If you like to execute the <code>data_prep.py</code> as a script file, follow this instruction</p>
         <pre><code class="language-bash">
-            pytorch-projects-py3.12zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python  src/model_demo/data_prep.py
+            pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python  src/model_demo/data_prep.py
             # with the following path specification in the script
             import sys
             sys.path.append('/src/model_demo')
@@ -69,31 +69,36 @@
         </code></pre>
         <p>or if you want to run it as a module</p>
         <pre><code class="language-bash">
-            pytorch-projects-py3.12zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python -m src.model_demo.data_prep
+            pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python -m src.model_demo.data_prep
             # with the alternative specification in the script
             from src.model_demo.utils import synthesize_data, norm
         </code></pre>
         <h2>Model Training</h2>
         <p>I only configured and run <code>model_demo.py</code> as a module with <code>-m</code> option.</p>
         <pre><code class="language-bash">
-            pytorch-projects-py3.12zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python -m src.model_demo.model_demo
+            pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python -m src.model_demo.model_demo
         </code></pre>
         <p>With the following import code (compare to the <code>data_prep.py</code> above)</p>
         <pre><code class="language-python">from src.model_demo.utils import LinearRegressionModel, load_data, infer_evaluate_model
         </code></pre>
         <h2>Model Inference</h2>
         <h3>Model inference on server</h3>
-        <p>To run the server from <code>pytorch-projects-py3.12zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$</code></p>
+        <p>To run the server from <code>pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$</code></p>
         <pre><code class="language-bash">
             python -m uvicorn src.model_demo.fast_api:app --reload --port 8000
         </code></pre>
+        <p>If no port process is available, To list the PID <code>isof -i :8000</code>, to kill the process <code>kill -i &ltpid&gt</code>. </p>
         <p>To submit test data for inference through URL <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> by Swagger UI. (typical localhost IP address is 127.0.0.1, so alternatively you may through <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a> instead. Run <code>cat /etc/hosts</code> from terminal to confirm the IP address). To access the ReDoc-generated page displaying your API’s documentation, navigate to <a href="http://localhost:8000/redoc">http://localhost:8000/redoc</a></p>
         <p>Go to Post &gt; [Try it out] &gt; input data into &quot;Request body&quot; box &gt; [Execute]</p>
+
+        <h3>Model inference on Localhost URL</h3>
+        <p>I alse reated single data point inferene web <code>http://localhost:8000/predict</code> and bath data inference web <code>http://localhost:8000/batch_predict</code>. User can follow the instruction to input the data and <code style="color : blue">Predict</code> the outcomes.</p>
+
         <h3>Model inference through Python script</h3>
         <p>To submit test data for inference through Python script</p>
         <pre><code class="language-bash">
             zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ source .venv/bin/activate
-            (pytorch-projects-py3.12) zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python src/model_demo/submit_for_inference.py
+            (pytorch) zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/pytorch-projects$ python src/model_demo/submit_for_inference.py
         </code></pre>
         <p>To see the prediction result from <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>
         <p>Alternatively, use curl to execute prediction. Here are examples</p>
