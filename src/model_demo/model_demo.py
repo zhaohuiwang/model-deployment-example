@@ -117,20 +117,18 @@ if __name__ == "__main__":
 
 """
 To save the trained model for later use
-
 # PyTorch models store the learned parameters in an internal state dictionary, called state_dict. These can be persisted via the torch.save method
 torch.save(model.state_dict(), 'model_weights.pth')
 
 # To load model weights, you need to create an instance of the same model first, and then load the parameters using load_state_dict() method.
 
-modelX = nn.Linear(1, 1)
-modelX.load_state_dict(torch.load('model_weights.pth', weights_only=True))
+model = nn.Linear(1, 1)
+model.load_state_dict(torch.load('model_weights.pth', weights_only=True))
 # Using weights_only=True is considered a best practice when loading weights.
-modelX.to(device)
+model.to(device)
 
-# Remember that you must call model.eval() to set dropout and batch normalization layers to evaluation mode before running inference. Failing to do this will yield inconsistent inference results. If you wish to resuming training, call model.train() to set these layers to training mode.
-modelX.eval()
-
+# Remember to call model.eval() to set dropout and batch normalization layers to evaluation mode before running inference. Failing to do this will yield inconsistent inference results. If you wish to resuming training, call model.train() to set these layers to training mode.
+model.eval()
 
 # Load .npy file
 loaded_npy = np.load('mnist_predictions.npy')
@@ -139,5 +137,38 @@ print("Loaded .npy:", loaded_npy[:5])
 # Load .csv file
 loaded_csv = np.loadtxt('mnist_predictions.csv', delimiter=',')
 print("Loaded .csv:", loaded_csv[:5])
+
+
+### Model inference through Python script
+# Load the trained model weights, weights_only=True as a best practice.
+try:
+    model.load_state_dict(torch.load(Path(model_dir) / model_fname, weights_only=True))
+except FileNotFoundError:
+    logger.error("Model file not found")
+    raise RuntimeError("Model file not found")
+model.to(device)
+model.eval()  # Set to evaluate mode
+
+# Load data
+try:
+    tensors_dict = torch.load(Path(data_dir) / data_fname)
+except FileNotFoundError:
+    logger.error('Data or path not fund!')
+
+
+X_test = tensors_dict['X_test']
+y_test = tensors_dict['y_test']
+
+# Process the test data set
+X_test = X_test.to(device)
+y_test = y_test.to(device)
+
+test_data_iter = load_data((X_test, y_test), batch_size, is_train=False)
+
+# Perform inference
+predictions, avg_loss = infer_evaluate_model(model, test_data_iter, criterion)
+
+# Convert model output to NumPy and save
+numpy_predictions = predictions.cpu().numpy()
 
 """
