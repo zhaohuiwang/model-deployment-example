@@ -1,6 +1,9 @@
+
 services:
-  web:
-    # Build the image from the Dockerfile in the current directory
+  #  service names - key
+  demo_web:
+    # service definitions - value
+    # Build the image from the Dockerfile in the current directory. Image name and tag are not needed.
     build: .
 
     # Host the FastAPI application on port 8000
