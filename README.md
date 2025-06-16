@@ -207,6 +207,7 @@ We can then build and run the application with a sigle command.
 ```Bash
 # start all the services defined in the compose.yaml file
 docker compose up
+docker compose up -d    # suggested in detach mode
 # list all the services along with their status
 docker compose ps	
 # stop and remove the running services (clean up) (or Ctrl + c) 
