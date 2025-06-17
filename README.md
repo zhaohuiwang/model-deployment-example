@@ -1,7 +1,8 @@
+<!-- The back to top link -->
+<a id="readme-top"></a>
 
 
-
-## Welcome to Zhaohui Wang's ML Model Deployment Example
+<h2 align="center">Welcome to Zhaohui Wang's ML Model Deployment Example</h2>
 In this example project, you can find some Python script files I wrote for variou propuses including synthetic data prepration, model training/evaluation using PyTorch, model server application using FastAPI, model inference and configurations. These scripts can be executed to test the model and model inference. The main goal is to provide an example on how to deploy a trained model through FastAPI on Web application and package everything including script files and dependencies into a Docker image. The web application scripts is organized in the `fast_api.py` file and Docker configurations are organized in `Dockerfile` and `compose.yml` files. All the execution steps with detaisl from environment setup to final model deployment are described below.
 
 ### Environment setup (uv)
@@ -68,6 +69,9 @@ Here is the tree structure showing how the files are organized in my project dir
 ├── test
 └── uv.lock
 ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ### Building a Demo Modle with PyTorch
 #### Data Preparation
 There are many ways to generate a synthetic data using code in `data_prep.py`. The simple option is to run script file as a module
@@ -149,6 +153,7 @@ curl -X POST "http://localhost:8000/batch_predict" -H "Content-Type: application
 | http://localhost:8000/batch_predict  | Batch data prediction | 
 | The most common localhost address used for servers is 127.0.0.1. | 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Model Development Using Docker
 
@@ -198,8 +203,6 @@ docker kill <IMAGE ID>
 ```
 The model is now deployed in Docker! Everyone can pull this Docker image and run the application if Docker is installed on their machine and expect the promised consistent outcomes.
 
-References:
- 1. [Using uv in Docker ](https://github.com/astral-sh/uv-docker-example/blob/main/README.md)
 
 #### Docker compose
 We can simplify the control of the entire application stack with docker compose. In the `compose.yml` file, I instruct Docker daemon to build a Docker image and run it with ports configuration (binds the host port to the port on the container system).
@@ -214,3 +217,13 @@ docker compose ps
 docker compose down
 
 ```
+
+## Contact
+
+Zhaohui Wang - X [@zhwang22](https://x.com/zhwang22) - ezhwang@gmail.com <br />
+Project Link: [github.com/zhaohuiwang/model-deployment-example](https://github.com/zhaohuiwang/model-deployment-example)
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+## References:
+ 1. [Using uv in Docker ](https://github.com/astral-sh/uv-docker-example/blob/main/README.md)

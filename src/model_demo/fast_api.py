@@ -62,9 +62,14 @@ except FileNotFoundError:
 model.to(device)
 model.eval()  # Set to evaluate mode
 
+from fastapi.responses import JSONResponse, PlainTextResponse
+@app.get("/test", response_class=PlainTextResponse)
+async def read_root():
+    return "Hello World"
 
-# API Root endpoint - HTTP method for data requests/retrieval
-@app.get("/", response_class=HTMLResponse)
+
+# Define a get endpoint for URL path `/`- HTTP method for data requests
+@app.get("/", response_class=HTMLResponse) # HTMLResponse renders a web page
 async def root(request: Request):
     #return {"message": "Welcome to my API"} # when applying the default response_class is JSON
     return templates.TemplateResponse(
