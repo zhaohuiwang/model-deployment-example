@@ -25,7 +25,9 @@ cs = hydra.core.config_store.ConfigStore.instance()
 # call store() method to add your dataclasses as configuration nodes.
 cs.store(name="meta_configs", node=MetadataConfigSchema)
 
-
+'''
+ ConfigStore helps validate your configuration against defined schemas (dataclasses), or type checking. With this section, Hydra actually provides the data as a class (specified by node) instance. Without this section, Hydra can still provide the raw data from the path specification in the decocator.  
+ '''
 @hydra.main(
       config_path="configs", # path to the configuration file 
       config_name="config",  # configuration file name in YAML
