@@ -26,7 +26,11 @@ cs = hydra.core.config_store.ConfigStore.instance()
 cs.store(name="meta_configs", node=MetadataConfigSchema)
 
 '''
- ConfigStore helps validate your configuration against defined schemas (dataclasses), or type checking. With this section, Hydra actually provides the data as a class (specified by node) instance. Without this section, Hydra can still provide the raw data from the path specification in the decocator.  
+ ConfigStore helps validate your configuration against defined schemas (dataclasses), or type checking. With this section, Hydra actually provides the data as a class (specified by node) instance. Without this section, Hydra can still provide the raw data from the path specification in the decocator. 
+ If both hydra configstor and decorator are absent, we can still instantiate the data class and get the configuration attributes like normal classes. for instance
+ config =  MetadataConfigSchema()
+ data_dir = config.data.data_dir
+ ...
  '''
 @hydra.main(
       config_path="configs", # path to the configuration file 
