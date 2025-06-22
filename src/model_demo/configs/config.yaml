@@ -1,0 +1,21 @@
+
+path:
+  data_dir: data/model_demo
+  model_dir: models/model_demo
+
+
+fname:
+  data_fname: data_tensors.pt
+  data_prep_log_fname: data_logfile.log
+  model_fname: demo_model_weights.pth
+
+
+# ${hydra:runtime.cwd} returns the current working directory
+
+model:
+  _target_: LinearRegressionModel
+  test_after_training: bool
+  train_size: 0.8
+  batch_size: 100
+  epochs: 100
+  learning_rate: 0.01
