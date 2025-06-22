@@ -419,5 +419,159 @@ print(user.model_dump(include={"email_address"}))
 print(user.model_dump(exclude={"email_address"}))
 # {'email_address': 'alice@example.com'}
 
+'''
+Behaviour of pydantic can be controlled via the model_config attribute on a BaseModel. Previous vesion was config class within the BaseModel
+
+Object-Relational Mapping (ORM)
 
 
+JSON Schema is a specification for defining the structure, constraints, and documentation of JSON data. 
+
+FastAPI uses Pydantic's JSON Schema generation to create interactive API documentation via Swagger UI and ReDoc. This makes your APIs self-documenting and easy to use.
+
+You can use the Field function to add metadata like descriptions and examples to your schema.
+
+ '''
+
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+    is_active: bool = True
+print(User.model_json_schema())
+
+{
+    'properties': {
+        'id': {'title': 'Id', 'type': 'integer'},
+        'name': {'title': 'Name', 'type': 'string'},
+        'is_active': {'default': True, 'title': 'Is Active', 'type': 'boolean'}}, 
+    'required': ['id', 'name'], 
+    'title': 'User', 
+    'type': 'object'
+ }
+
+# Pydantic supports nested models, arrays, and custom types, all of which are reflected in the generated JSON Schema
+class Address(BaseModel):
+    street: str
+    city: str
+    zipcode: str
+
+class User(BaseModel):
+    id: int
+    name: str
+    address: Address
+print(User.model_json_schema())
+
+
+{
+    '$defs': {
+        'Address': {
+            'properties': {
+                'street': {'title': 'Street', 'type': 'string'},
+                'city': {'title': 'City', 'type': 'string'},
+                'zipcode': {'title': 'Zipcode', 'type': 'string'}
+                },
+                'required': ['street', 'city', 'zipcode'],
+                'title': 'Address',
+                'type': 'object'
+            }
+        },
+    'properties': {
+        'id': {'title': 'Id', 'type': 'integer'},
+        'name': {'title': 'Name', 'type': 'string'},
+        'address': {'$ref': '#/$defs/Address'}
+        },
+        'required': ['id', 'name', 'address'], 
+        'title': 'User',
+        'type': 'object'
+}
+
+# Example: JSON Validation with jsonschema
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
+
+schema = User.model_json_schema()
+# Valid data
+data = {
+    "id": 1,
+    "name": "John Doe",
+    "address": {
+        "street": "123 Elm St",
+        "city": "Metropolis",
+        "zipcode": "54321"
+    }
+}
+validate(instance=data, schema=schema)  # Passes validation
+# Invalid data
+invalid_data = {
+    "id": 1,
+    "name": "John Doe",
+}
+try:
+    validate(instance=invalid_data, schema=schema)
+except ValidationError as e:
+    print(e.message)
+# 'address' is a required property
+
+
+'''
+Serialization refers to converting an object into a format that can be easily stored or transferred. In Pydantic:
+
+Default Serialization: Models have a built-in .model_dump() method (formerly .dict()) to serialize data into Python dictionaries.
+Custom Serialization: You can extend serialization logic using @model_serializer decorators or by overriding methods like .model_dump().
+
+'''
+
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+user = User(id=1, name="Alice", email="alice@example.com")
+# Default Serialization
+print(user.model_dump())
+
+
+
+# Custom Serialization with @model_serializer
+from pydantic import BaseModel, model_serializer
+
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+    @model_serializer
+    def serialize(self):
+        return {"id": self.id, "name": self.name}  
+    # Exclude email - Hiding Sensitive Data
+user = User(id=1, name="Alice", email="alice@example.com")
+print(user.model_dump())
+
+## Serializing to Custom Formats (e.g., CSV)
+class Product(BaseModel):
+    id: int
+    name: str
+    price: float
+
+    @model_serializer
+    def to_csv(self):
+        return f"{self.id},{self.name},{self.price:.2f}"
+product = Product(id=1, name="Laptop", price=999.99)
+print(product.to_csv())
+
+
+# Overriding model_dump for Global Customization
+class User(BaseModel):
+    id: int
+    name: str
+    email: str
+
+def model_dump(self):
+        return {
+            "user_id": self.id,
+            "full_name": self.name.upper(),
+        }
+user = User(id=1, name="Alice", email="alice@example.com")
+print(user.model_dump())
