@@ -72,15 +72,14 @@ class MetadataConfigSchema:
 Data classes require type hints but types aren't actually enforced due to Python not dataclass itself. Data classes also allow default values in fields. Keep in mind that non-default fields can't follow default fields.
 
 In practice, you will rarely define defaults with `name: type = value` syntax. Instead, you will use the **field function**, which allows more control of each field definition. Syntax: 
-`name: type = field(default=value)`
+`name: type = Field(default=value)`
 The default_factory parameter accepts a function that returns an initial value for a data class field. It accepts any arbitratary funciton, including tuple, list, dict, set, and any user-defined custum function or lambda <arguments>  : expression
-for example, exercises: `List[Exercise] = field(default_factory=create_warmup)`
 We can add methods to data classes as we do for regular classes.
 
-
+Comparison:
 from pydantic.dataclasses import dataclass, Field
 from dataclasses import dataclass, field
-dataclasses.dataclass does not provide built-in data validation, does not automatically coerce types. You have to do manual validation.
-pydantic.dataclasses.dataclass performs automatic type validation and coercion
-pydantic.dataclasses.Field and dataclasses.field are almost the same.
+1. dataclasses.dataclass does not provide built-in data validation, does not automatically coerce types. You have to do manual validation.
+2. pydantic.dataclasses.dataclass performs automatic type validation and coercion
+3. pydantic.dataclasses.Field is the counterpart of the dataclasses.field.
 """

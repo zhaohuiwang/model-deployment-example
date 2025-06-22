@@ -10,10 +10,8 @@ fname:
   model_fname: demo_model_weights.pth
 
 
-# ${hydra:runtime.cwd} returns the current working directory
-
 model:
-  _target_: LinearRegressionModel
+  #_target_: LinearRegressionModel
   test_after_training: bool
   train_size: 0.8
   batch_size: 100
