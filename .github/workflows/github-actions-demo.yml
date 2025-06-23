@@ -21,12 +21,15 @@ jobs:
         echo "🖥️ The workflow is now ready to test your code on the runner."
     - name: Build image
       run: |
-        docker build . -t zhaohuiwang/deployment-template:latest
+        docker build . -t ${{ github.repository }}:latest
         echo "🎉 The Docker build succeed."
     - name: Push image to docker hub
       run: |
-        docker login -u zhaohuiw -p ${{ secrets.DH_PAT }} 
-        docker push zhaohuiwang/deployment-template:latest
+        docker login -u ${{ DH_USERNAME }} -p ${{ secrets.DH_GH }} 
+        docker push ${{ github.repository }}:latest
         echo "🎉 The Docker image was pushed to docker hub."
       # login Dockerhub
     - run: echo "🍏 This job's status is ${{ job.status }}."
+    
+# ${{ GITHUB_ACTOR }} represents the name of the user who initiated the workflow run. 
+# ${{ github.repository }} refers to the name of the repository in the format owner/repository-name
