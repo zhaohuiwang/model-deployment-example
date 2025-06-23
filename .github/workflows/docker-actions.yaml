@@ -1,4 +1,6 @@
 
+# Note: I disabled this action by a fake branch name
+
 name: Build and Publish image
 run-name: ${{ github.actor }} is publishing a new Docker image 🚀
 
@@ -6,7 +8,7 @@ run-name: ${{ github.actor }} is publishing a new Docker image 🚀
 on:
   push:
     branches:
-      - main
+      - main_fake
   # to run a workflow manually, configure your workflow to run on workflow_dispatch in the default branch
 
 jobs: 
@@ -26,10 +28,6 @@ jobs:
     - name: Push image to docker hub
       run: |
         docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_GH }} 
-        echo ${{ github.repository }}:latest
-        echo ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}:latest
-        echo docker tag ${{ github.repository }}:latest ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}:latest
-
         docker tag ${{ github.repository }}:latest ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}:latest
         docker push ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}:latest
         echo "🎉 The Docker image was pushed to docker hub."
