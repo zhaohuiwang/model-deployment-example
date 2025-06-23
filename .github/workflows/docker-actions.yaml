@@ -8,7 +8,7 @@ run-name: ${{ github.actor }} is publishing a new Docker image 🚀
 on:
   push:
     branches:
-      - main
+      - main-fake
   # to run a workflow manually, configure your workflow to run on workflow_dispatch in the default branch
 
 env:
