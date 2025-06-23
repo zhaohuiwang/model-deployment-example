@@ -1,4 +1,4 @@
 
 
 def test_demo() -> None:
-    assert 1 is int
+    assert type(1) is int
