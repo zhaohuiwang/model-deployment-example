@@ -33,3 +33,4 @@ jobs:
     
 # ${{ GITHUB_ACTOR }} represents the name of the user who initiated the workflow run. 
 # ${{ github.repository }} refers to the name of the repository in the format owner/repository-name
+# all environment variables, secrets are sase-insensitive.
