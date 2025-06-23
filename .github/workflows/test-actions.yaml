@@ -1,0 +1,32 @@
+name: Python package
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Test with pytest
+        run: |
+          pip install pytest pytest-cov
+          pytest tests.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+
+#  pytest tests.py: Runs tests in the tests.py file.
+#  --doctest-modules: Enables doctest discovery, running tests embedded in docstrings of Python modules.
+#  --junitxml=junit/test-results.xml: Generates a JUnit-style XML report at junit/test-results.xml for CI integration.
+#  --cov=com: Measures code coverage for the com package or directory.
+#  --cov-report=xml: Generates a coverage report in XML format (typically coverage.xml).
+#  --cov-report=html: Generates an HTML coverage report (typically in htmlcov/ directory).

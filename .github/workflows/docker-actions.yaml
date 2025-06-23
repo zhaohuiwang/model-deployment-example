@@ -42,6 +42,7 @@ jobs:
       # login Dockerhub
     - run: echo "🍏 This job's status is ${{ job.status }}."
     
+# Checkout V4 checks-out your repository under $GITHUB_WORKSPACE, so your workflow can access it.    
 # ${{ GITHUB_ACTOR }} represents the name of the user who initiated the workflow run. 
 # ${{ github.repository }} refers to the name of the repository in the format owner/repository-name
 # all environment variables, secrets are sase-insensitive.
