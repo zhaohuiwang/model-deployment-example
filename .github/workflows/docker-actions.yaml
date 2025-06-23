@@ -16,7 +16,7 @@ env:
 
   DOCKER_TAG: 0.1
   GITHUB_REGISTRY: ghcr.io
-  DOCKERHUB.REPOITORY: ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}
+  DOCKERHUB_REPOITORY: ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}
 
 
 jobs: 
@@ -36,8 +36,8 @@ jobs:
     - name: Push image to docker hub
       run: |
         docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_GH }} 
-        docker tag ${{ github.repository }}:${{ env.DOCKER_TAG }} ${{ env.DOCKERHUB.REPOITORY }}:${{ env.DOCKER_TAG }}
-        docker push ${{ env.DOCKERHUB.REPOITORY }}:${{ env.DOCKER_TAG }}
+        docker tag ${{ github.repository }}:${{ env.DOCKER_TAG }} ${{ env.DOCKERHUB_REPOITORY }}:${{ env.DOCKER_TAG }}
+        docker push ${{ env.DOCKERHUB_REPOITORY }}:${{ env.DOCKER_TAG }}
         echo "🎉 The Docker image was pushed to docker hub."
       # login Dockerhub
     - run: echo "🍏 This job's status is ${{ job.status }}."
