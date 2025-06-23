@@ -22,7 +22,7 @@ jobs:
     - name: Build image
       run: |
         docker build . -t ${{ github.repository }}:latest
-        echo "🎉 The Docker build succeed."
+        echo "🎉 Successfully built: ${{ github.repository }}:latest."
     - name: Push image to docker hub
       run: |
         docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_GH }} 
