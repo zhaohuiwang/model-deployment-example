@@ -1,20 +1,32 @@
 
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
-jobs:
-  Explore-GitHub-Actions:
+name: Build and Publish image
+run-name: ${{ github.actor }} is publishing a new Docker image 🚀
+
+# Event that trigger workflow
+on:
+  push:
+    branches:
+      - main
+  # to run a workflow manually, configure your workflow to run on workflow_dispatch in the default branch
+
+jobs: 
+  publish_images:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-
+    - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+    - name: Check out repository code
+      uses: actions/checkout@v4
+    - run: |
+        echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+        echo "🖥️ The workflow is now ready to test your code on the runner."
+    - name: Build image
+      run: |
+        docker build . -t zhaohuiwang/deployment-template:latest
+        echo "🎉 The Docker build succeed."
+    - name: Push image to docker hub
+      run: |
+        docker login -u zhaohuiw -p ${{ secrets.DH_PAT }} 
+        docker push zhaohuiwang/deployment-template:latest
+        echo "🎉 The Docker image was pushed to docker hub."
+      # login Dockerhub
+    - run: echo "🍏 This job's status is ${{ job.status }}."
