@@ -25,7 +25,7 @@ jobs:
         echo "🎉 The Docker build succeed."
     - name: Push image to docker hub
       run: |
-        docker login -u ${{ DH_USERNAME }} -p ${{ secrets.DH_GH }} 
+        docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_GH }} 
         docker push ${{ github.repository }}:latest
         echo "🎉 The Docker image was pushed to docker hub."
       # login Dockerhub
