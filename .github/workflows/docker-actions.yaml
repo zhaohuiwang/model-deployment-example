@@ -26,7 +26,9 @@ jobs:
     - name: Push image to docker hub
       run: |
         docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_GH }} 
-        docker push ${{ github.repository }}:latest
+        REPO_NAME=${{ github.repository#*/ }}
+        docker tag {{ github.repository }}:latest ${{ secrets.DH_USERNAME }}/${{ REPO_NAME }}:latest
+        docker push ${{ secrets.DH_USERNAME }}/${{ REPO_NAME }}:latest
         echo "🎉 The Docker image was pushed to docker hub."
       # login Dockerhub
     - run: echo "🍏 This job's status is ${{ job.status }}."
@@ -34,3 +36,5 @@ jobs:
 # ${{ GITHUB_ACTOR }} represents the name of the user who initiated the workflow run. 
 # ${{ github.repository }} refers to the name of the repository in the format owner/repository-name
 # all environment variables, secrets are sase-insensitive.
+# REPO_NAME=${{ github.repository#*/ }} - Extracts everything after the first '/'
+# Note: Because my Github username is different from my DockerHub username so I need to run docker tag step.    
