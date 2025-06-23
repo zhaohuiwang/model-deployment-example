@@ -8,8 +8,16 @@ run-name: ${{ github.actor }} is publishing a new Docker image 🚀
 on:
   push:
     branches:
-      - main_fake
+      - main
   # to run a workflow manually, configure your workflow to run on workflow_dispatch in the default branch
+
+env:
+# YAML is just markup, not code. You can't expect a generalised behaviour of evaluating any kind of expression.Template expression variables (${{ var.variable }}) get processed at compile time. Macro syntax variables ($(var)) get processed during runtime before a task runs.
+
+  DOCKER_TAG: 0.1
+  GITHUB_REGISTRY: ghcr.io
+  DOCKERHUB.REPOITORY: ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}
+
 
 jobs: 
   publish_images:
@@ -23,13 +31,13 @@ jobs:
         echo "🖥️ The workflow is now ready to test your code on the runner."
     - name: Build image
       run: |
-        docker build . -t ${{ github.repository }}:latest
-        echo "🎉 Successfully built: ${{ github.repository }}:latest."
+        docker build . -t ${{ github.repository }}:${{ env.DOCKER_TAG }}
+        echo "🎉 Successfully built: ${{ github.repository }}:${{ env.DOCKER_TAG }}."
     - name: Push image to docker hub
       run: |
         docker login -u ${{ secrets.DH_USERNAME }} -p ${{ secrets.DH_GH }} 
-        docker tag ${{ github.repository }}:latest ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}:latest
-        docker push ${{ secrets.DH_USERNAME }}/${{ github.event.repository.name }}:latest
+        docker tag ${{ github.repository }}:${{ env.DOCKER_TAG }} ${{ DOCKERHUB.REPOITORY }}:${{ env.DOCKER_TAG }}
+        docker push ${{ DOCKERHUB.REPOITORY }}:${{ env.DOCKER_TAG }}
         echo "🎉 The Docker image was pushed to docker hub."
       # login Dockerhub
     - run: echo "🍏 This job's status is ${{ job.status }}."

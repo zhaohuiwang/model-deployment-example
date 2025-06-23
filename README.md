@@ -3,7 +3,17 @@
 
 
 <h2 align="center">Welcome to Zhaohui Wang's ML Model Deployment Example</h2>
-In this example project, you can find some Python script files I wrote for variou propuses including synthetic data prepration, model training/evaluation using PyTorch, model server application using FastAPI, model inference and configurations. These scripts can be executed to test the model and model inference. The main goal is to provide an example on how to deploy a trained model through FastAPI on Web application and package everything including script files and dependencies into a Docker image. The web application scripts is organized in the `fast_api.py` file and Docker configurations are organized in `Dockerfile` and `compose.yml` files. All the execution steps with detaisl from environment setup to final model deployment are described below.
+In this example project, you can find script files (Python, YAML, ect.) I wrote for various purposes including:
+<ol>
+    <li>synthetic data prepration</li>
+    <li>configuration using Hydra and Pydantic</li>
+    <li>model training/evaluation using PyTorch</li>
+    <li>model server application using FastAPI</li>
+    <li>model inference and configurations</li>
+    <li>Docker containerization</li>
+    <li>CI/CD pipeline with GitHub Actions etc.</li>
+</ol>
+These scripts can be executed to test model building, inference, and deployment. The main goal is to provide an example on full stack ML pipeline. The web application scripts is organized in the `fast_api.py` file and Docker configurations are organized in `Dockerfile` and `compose.yml` files. All the execution steps with details from environment setup to final model deployment are described below.
 
 ### Environment setup (uv)
 It is recommended to setup the environment (`.venv`) inside the project directory but the downside is it comsume memory. The alternative is to create environments in a desinated directory so they maybe shared across projects. I have an environment in `/venvs/uv-venvs/pytorch` that can be used directly without creating a new one in this project directory. The instruction is in `README.md` file inside the `pytorch` directory. I still need the pyproject and lock files inside this project directory when I  build a Docker image, I just copy or syn them over from my environment directory using the following `cp` commands or `rsync` commands,
@@ -39,10 +49,12 @@ Here is the tree structure showing how the files are organized in my project dir
 ```Bash
 .
 ├── .dockerignore
+├── .gitignore
+├── .github
+│   └── workflows ...
 ├── Dockerfile
 ├── README.md
 ├── compose.yml
-├── .gitignore
 ├── data
 │   └── model_demo ...
 ├── docs ...
@@ -217,6 +229,9 @@ docker compose ps
 docker compose down
 
 ```
+### CI/CD pipeline with GitHub Actions
+ 
+
 
 ## Contact
 
