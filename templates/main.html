@@ -87,7 +87,7 @@
         <pre><code class="language-bash">
             python -m uvicorn src.model_demo.fast_api:app --reload --port 8000
         </code></pre>
-        <p>If no port process is available, To list the PID <code>lsof -i :8000</code>, to kill the process <code>kill -i &ltpid&gt</code>. </p>
+        <p>If no port process is available, To list the PID <code>lsof -i :8000</code>, to kill the process <code>kill -9 &ltpid&gt</code>. </p>
         <p>To submit test data for inference through URL <a href="http://localhost:8000/docs">http://localhost:8000/docs</a> by Swagger UI. (typical localhost IP address is 127.0.0.1, so alternatively you may through <a href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a> instead. Run <code>cat /etc/hosts</code> from terminal to confirm the IP address). To access the ReDoc-generated page displaying your API’s documentation, navigate to <a href="http://localhost:8000/redoc">http://localhost:8000/redoc</a></p>
         <p>Go to Post &gt; [Try it out] &gt; input data into &quot;Request body&quot; box &gt; [Execute]</p>
 

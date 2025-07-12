@@ -124,7 +124,7 @@ python -m uvicorn src.model_demo.fast_api:app --reload --port 8000
 Recommendation:
 Use `fastapi dev ...` for development due to its simplicity and auto-reload. Use `uvicorn ...` for production or when you need fine-grained control over server settings.
 
-You may encounter error message like `[Errno 98] Address already in use`. Here is the solution: To list which PID(s) is using the port - `lsof -i :8000`, to kill the process - `kill -i <pid>`. 
+You may encounter error message like `[Errno 98] Address already in use`. Here is the solution: To list which PID(s) is using the port - `lsof -i :8000`, to kill the process - `kill -9 <pid>`. 
 
 I alse created single data point inferene and bath data inference URLs. User can follow the instruction to input the data and <code style="color : blue">Predict</code> the outcomes. So once the web localhost URL is up running, we have at least three options to submit test data for inference: 
 1. Through http://localhost:8000/docs by Swagger UI. (typical localhost IP address is 127.0.0.1, so alternatively you may use http://127.0.0.1:8000/docs instead. Run `cat /etc/hosts` from terminal to confirm the IP address). Go to Post > [Try it out] > input data into "Request body" box > [Execute]. The result will be displayed in the  "Response" section below.
