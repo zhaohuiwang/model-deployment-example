@@ -3,6 +3,7 @@ import os
 
 import hydra
 from omegaconf import OmegaConf
+from pathlib import Path
 
 import numpy as np
 import numpy.typing as npt
@@ -27,13 +28,13 @@ cs.store(name="meta_configs", node=MetadataConfigSchema)
 
 '''
  ConfigStore helps validate your configuration against defined schemas (dataclasses), or type checking. With this section, Hydra actually provides the data as a class (specified by node) instance. Without this section, Hydra can still provide the raw data from the path specification in the decocator. 
- If both hydra configstor and decorator are absent, we can still instantiate the data class and get the configuration attributes like normal classes. for instance
+ If both hydra configstore and decorator are absent, we can still instantiate the data class and get the configuration attributes like normal classes. for instance
  config =  MetadataConfigSchema()
  data_dir = config.data.data_dir
  ...
  '''
 @hydra.main(
-      config_path="configs", # path to the configuration file 
+      config_path=str(Path(__file__).parent.parent/"configs"), # path to the configuration file 
       config_name="config",  # configuration file name in YAML
       version_base="1.1"
       )
