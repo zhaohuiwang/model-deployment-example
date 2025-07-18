@@ -2,7 +2,6 @@ import logging
 import numpy as np
 import numpy.typing as npt
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from logging.handlers import RotatingFileHandler
 from pydantic import BaseModel
@@ -12,7 +11,7 @@ from typing import Iterator, List, Any, Tuple, Union
 def setup_logger(logger_name: str='MyAppLogger', log_file:str='app.log', log_level=logging.DEBUG):
     """
     Create a centralized logger configuration.
-    List of logging levels: DEBUG (10) >INFO (20) > WARNING (30) > ERROR (40) > CRITICAL (50)
+    List of logging levels: DEBUG (10) > INFO (20) > WARNING (30) > ERROR (40) > CRITICAL (50)
     """
     # Create logger
     logger = logging.getLogger(logger_name)
@@ -63,16 +62,6 @@ def synthesize_data(w: torch.Tensor, b: torch.Tensor, sample_size) -> Tuple[torc
 def norm(x:npt.NDArray) -> npt.NDArray:
     """ normalize the original data values """
     return (x - np.mean(x)) / np.std(x)
-
-
-class LinearRegressionModel(nn.Module):
-    def __init__(self, input_dim, output_dim):
-        super(LinearRegressionModel, self).__init__()
-        self.linear = nn.Linear(input_dim, output_dim)  
-
-    def forward(self, x):
-        out = self.linear(x)
-        return out
 
 # Define the request body format for predictions
 class PredictionFeatures(BaseModel):
