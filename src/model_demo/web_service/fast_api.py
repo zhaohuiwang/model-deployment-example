@@ -6,32 +6,28 @@ Ideal for creating production-ready APIs with automatic documentation (Swagger U
 Runs on an ASGI server like Uvicorn, typically on http://localhost:8000 during development.
 
 """
+from datetime import datetime
 import os
+from pathlib import Path
 
+from fastapi import HTTPException, FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 import numpy as np
 import pandas as pd
 import torch
 import uvicorn
 
-from datetime import datetime
-from fastapi import HTTPException, FastAPI, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from pathlib import Path
-from src.model_demo.config import MetadataConfigSchema
-from src.model_demo.utils import LinearRegressionModel, PredictionFeatures, PredictionFeaturesBatch, infer_model, setup_logger, get_device
+from src.model_demo.configs.config import MetadataConfigSchema
+from src.model_demo.utils import PredictionFeatures, PredictionFeaturesBatch, infer_model, setup_logger, get_device
 
-config = MetadataConfigSchema()
-data_dir = config.data.data_dir
-data_fname = config.data.data_fname
-model_dir = config.data.model_dir
-model_fname = config.data.model_fname
+cfg = MetadataConfigSchema()
 
 device = get_device()
 
 ## Logger setup
-logger = setup_logger(logger_name=__name__, log_file=f'{data_dir}/api_logfile.log')
+logger = setup_logger(logger_name=__name__, log_file=f'{cfg.path.data_dir}/api_logfile.log')
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -51,22 +47,16 @@ logger.info(f"Running at: {Path.cwd()}")
 
 
 # create an instance of the same model first
-model = LinearRegressionModel(2,1)
+model = cfg.modelinstance(2,1)
 
 # Load the trained model weights, weights_only=True as a best practice.
 try:
-    model.load_state_dict(torch.load(Path(model_dir) / model_fname, weights_only=True))
+    model.load_state_dict(torch.load(Path(cfg.path.model_dir) / cfg.fname.model_fname, weights_only=True))
 except FileNotFoundError:
     logger.error("Model file not found")
     raise RuntimeError("Model file not found")
 model.to(device)
 model.eval()  # Set to evaluate mode
-
-from fastapi.responses import JSONResponse, PlainTextResponse
-@app.get("/test", response_class=PlainTextResponse)
-async def read_root():
-    return "Hello World"
-
 
 # Define a get endpoint for URL path `/`- HTTP method for data requests
 @app.get("/", response_class=HTMLResponse) # HTMLResponse renders a web page
@@ -76,7 +66,6 @@ async def root(request: Request):
         "main.html",  # Template file
         {"request": request}  # Context data passed to the template
     )
-
 
 # API End point for data request from API prediction 
 @app.get("/predict", response_class=HTMLResponse)
@@ -115,7 +104,7 @@ async def predict(features: PredictionFeatures):
         # model inference
         outputs = infer_model(model, inputs).tolist()
 
-        with open(Path(data_dir) / 'predictions.txt', 'a') as f:
+        with open(Path(cfg.path.data_dir) / 'predictions.txt', 'a') as f:
             f.write(f"{datetime.now()}\nInput:\n{input_df}\nPrediction:\n{outputs}\n\n")
 
         logger.info(f"Input: {input_df}, Prediction: {outputs}")
@@ -145,7 +134,7 @@ async def batch_predict(features: PredictionFeaturesBatch):
         # model inference
         outputs = infer_model(model, inputs).flatten().tolist()
 
-        with open(Path(data_dir) / 'predictions.txt', 'a') as f:
+        with open(Path(cfg.path.data_dir) / 'predictions.txt', 'a') as f:
             f.write(f"{datetime.now()}\nInput:\n{inputs}\nPrediction:\n{outputs}\n\n")
 
         logger.info(f"Input: {inputs}, Prediction: {outputs}")
