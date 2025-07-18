@@ -352,7 +352,18 @@ Common Field Arguments:
 3. regex: Match strings against a regular expression.
 
 
+Use default for static, immutable values (e.g., str, int, None).
+Use default_factory for mutable objects (list, dict) or dynamic values (e.g., current date).
+Always use Field(default_factory=...) syntax for default_factory in Pydantic.
+
+Feature	       default	                default_factory
+Value Type	 Static value (e.g., 0, "text")	   Callable that generates a value
+Mutable Objects	Shared across instances (problematic)	Unique per instance (safe)
+Use Case	Immutable, fixed values	    Mutable objects or dynamic values
+Syntax	field: type = value	    field: type = Field(default_factory=callable)
+Example 	name: str = "John"	  items: List[int] = Field(default_factory=list)
 '''
+
 
 from pydantic import BaseModel, Field
 
@@ -418,6 +429,34 @@ print(user.model_dump(include={"email_address"}))
 # Exclude specific fields
 print(user.model_dump(exclude={"email_address"}))
 # {'email_address': 'alice@example.com'}
+
+
+from pydantic.dataclasses import dataclass
+
+@dataclass
+class Config_error:
+    my_list: list = []  # Mutable default, raises ValueError
+
+@dataclass
+class Config_ok1:
+    my_list: list = Field(default_factory=list)  # default_factory creates new instances for mutable fields, OK, safe
+
+
+# An immutable default is an object that cannot be modified after creation, such as integers, strings, tuples (with immutable contents), or None.
+@dataclass
+class Config_ok2:
+    my_str: str = "default"  # Immutable, safe
+    my_int: int = 42         # Immutable, safe
+    my_tuple: tuple = (1, 2) # Immutable, safe
+
+# Syntax comparisons default vs default_factory
+# Field(default=value)
+# Suitable for immutable types (e.g., str, int, float, tuple, None).
+
+# Field(default_factory=callable) 
+# where callable returns a new instance (e.g., list, dict, or a custom class constructor).
+# Required for mutable types (e.g., list, dict, set, Pydantic dataclasses, custom objects).
+
 
 '''
 Behaviour of pydantic can be controlled via the model_config attribute on a BaseModel. Previous vesion was config class within the BaseModel
@@ -575,3 +614,45 @@ def model_dump(self):
         }
 user = User(id=1, name="Alice", email="alice@example.com")
 print(user.model_dump())
+
+
+
+"""
+Hydra is an open-source Python framework that simplifies the development of research and other complex applications. The key feature is the ability to dynamically create a hierarchical configuration by composition and override it through config files and the command line. The name Hydra comes from its ability to run multiple similar jobs - much like a Hydra with multiple heads.
+
+
+import hydra
+from omegaconf import DictConfig, OmegaConf
+
+@hydra.main(version_base=None, config_path="conf", config_name="config")
+def my_app(cfg : DictConfig) -> None:
+    print(OmegaConf.to_yaml(cfg))
+
+if __name__ == "__main__":
+    my_app()
+
+
+The resulting cfg object is a composition of configs from defaults with configs specified in your config.yaml.
+pathlib Path many be applied in config_path but the object should be converted to string first using str(Path_object). 
+@hydra.main(version_base=None, config_path=".", config_name="config")
+
+Hydra configuration files are yaml files and should have the .yaml file extension. But when you specify the config name by passing a config_name parameter to the @hydra.main() decorator, you should omit the .yaml extension.
+
+
+from omegaconf import DictConfig, OmegaConf
+import hydra
+
+@hydra.main(
+      config_path=str(Path(__file__).parent.parent/"configs"), 
+      config_name="infer_config",  # configuration file name without extension
+      version_base="1.1"
+      )
+   
+config.yaml
+defaults:
+  - db: mysql
+
+$ python my_app.py
+$ python my_app.py db=postgresql db.timeout=20  # Override a default
+
+"""

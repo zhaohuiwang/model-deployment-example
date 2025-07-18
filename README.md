@@ -60,25 +60,36 @@ Here is the tree structure showing how the files are organized in my project dir
 ├── docs ...
 ├── models
 │   └── model_demo ...
+├── outputs
 ├── pyproject.toml
 ├── run.sh
 ├── src
 │   ├── __init__.py
 │   └── model_demo
 │       ├── __init__.py
-│       ├── config.py
-│       ├── data_prep.py
-│       ├── fast_api.py
-│       ├── model_demo.py
-│       ├── submit_for_inference.py
-│       └── utils.py
+│       ├── configs
+│       │   ├── config.py
+│       │   └── config.yaml
+│       ├── data_prep
+│       │   ├── __init__.py
+│       │   └── data_prep.py
+│       ├── models
+│       │   ├── __init__.py
+│       │   └── model_demo.py
+│       ├── utils.py
+│       └── web_service
+│           ├── __init__.py
+│           ├── fast_api.py
+│           └── submit_for_inference.py
 ├── static
 │   └── styles.css
 ├── templates
 │   ├── batch_predict.html
 │   ├── main.html
 │   └── predict.html
-├── test
+├── tests
+│   ├── README_TEST.md
+│   └── test_model.py
 └── uv.lock
 ```
 
@@ -94,7 +105,7 @@ from src.model_demo.utils import synthesize_data, norm
 ```
 The second option is to execute the `data_prep.py` as a script file or run line by line (for optimization/trouble shooting)
 ```Bash
-pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python  src/model_demo/data_prep.py
+pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python  src/model_demo/data_prep/data_prep.py
 # with the following path specification in the script
 import sys
 sys.path.append('/src/model_demo')
@@ -103,7 +114,7 @@ from utils import synthesize_data, norm
 #### Model Training
 Similar to the data paration, either script or module mode can be executed on `model_demo.py` with or without modifications. For simplicity, I only describe the module mode here. 
 ```Bash
-pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python -m src.model_demo.model_demo
+pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python -m src.model_demo.models/model_demo
 ```
 #### Model inference
 When you want to perform model inference and evaluation, you can load the model and perform model inference by executing the Python script directly (the code snippet is in the comment section in `model_demo.py`). However the limitation for this approach is that you can only use the model in the same environment where the model was trained and can not be used by many other users. For more business values, high quanlity models should be deployed and the access be granded to all possible users, with consistency promise. Next two sections are examples for two model deployment approaches: Web application via FastAPI and containerization by Docker.
@@ -114,12 +125,12 @@ Deploying a model via an API means exposing its functionality as a web service t
 With the FastAPI configuration in `fast_api.py` file, we can spin up a web application directly by executing any of the following code in the project directory or `dev/model-deployment-example`
 ```Bash
 # via FastAPI development mode `dev` (default auto-reload enabled) 
-fastapi dev src/model_demo/fast_api.py
+fastapi dev src/model_demo/web_service/fast_api.py
 # or production mode
-fastapi run src/model_demo/fast_api.py
+fastapi run src/model_demo/web_service/fast_api.py
 #  via unicorn
-uvicorn src.model_demo.fast_api:app --reload --port 8000
-python -m uvicorn src.model_demo.fast_api:app --reload --port 8000
+uvicorn src.model_demo.web_service.fast_api:app --reload --port 8000
+python -m uvicorn src.model_demo.web_service.fast_api:app --reload --port 8000
 ```
 Recommendation:
 Use `fastapi dev ...` for development due to its simplicity and auto-reload. Use `uvicorn ...` for production or when you need fine-grained control over server settings.
@@ -141,7 +152,7 @@ We still have the option to submit test data for inference through Python script
 # activate the environment (choose one according to you environment directory)
 zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ source .venv/bin/activate 
 zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ source ../venvs/uv-venvs/pytorch/.venv/bin/activate
-(pytorch) zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python src/model_demo/submit_for_inference.py
+(pytorch) zhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python src/model_demo/web_service/submit_for_inference.py
 ```
 ![](/docs/images/script_file_predict.png)
 
@@ -198,7 +209,7 @@ Next to create and start a new container based on the Docker image (`myapp:v1`) 
 # Start with the default application CMD specified in the Dockerfile
 docker run -p 8000:8000 -it --rm myapp:v1
 # or with the override option (the same CMD as in Dockerfile for illustration propuse only)
-docker run -p 8000:8000 -it --rm myapp:v1 fastapi run --host 0.0.0.0 src/model_demo/fast_api.py
+docker run -p 8000:8000 -it --rm myapp:v1 fastapi run --host 0.0.0.0 src/model_demo/web_service/fast_api.py
 # Note: Both the `-p` and the `--host 0.0.0.0` specifications are critical. 
 
 # To overrides the image’s default command, and start an interactive Bash shell inside the container
