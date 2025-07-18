@@ -38,4 +38,4 @@ ENTRYPOINT []
 
 # Run the FastAPI application by default
 # Uses `--host 0.0.0.0` to allow access from outside the container
-CMD ["fastapi", "run", "--host", "0.0.0.0", "src/model_demo/fast_api.py"]
+CMD ["fastapi", "run", "--host", "0.0.0.0", "src/model_demo/web_service/fast_api.py"]

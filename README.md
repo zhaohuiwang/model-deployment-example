@@ -194,6 +194,7 @@ cp -u ../venvs/uv-venvs/pytorch/uv.lock .
 # or rsync which is efficient for syncing files and only copies changes.
 rsync -av --update ../venvs/uv-venvs/pytorch/pyproject.toml .
 rsync -av --update ../venvs/uv-venvs/pytorch/uv.lock .
+# or just run `uv lock` after updating pyproject.toml to create/update uv.lock file
 ```
 Once the Dockerfile is ready, we can then open the Docker Desktop app and create a docker image using the following command ("demoapp:v1" is the name/version of the image). 
 ```Bash
@@ -208,8 +209,10 @@ Next to create and start a new container based on the Docker image (`myapp:v1`) 
 ```Bash
 # Start with the default application CMD specified in the Dockerfile
 docker run -p 8000:8000 -it --rm myapp:v1
+docker run -p 9000:8000 -it --rm myapp:v1 # use a different host port http://127.0.0.1:9000/
 # or with the override option (the same CMD as in Dockerfile for illustration propuse only)
 docker run -p 8000:8000 -it --rm myapp:v1 fastapi run --host 0.0.0.0 src/model_demo/web_service/fast_api.py
+# Note: the mapping - Host port:Container (Docker) port
 # Note: Both the `-p` and the `--host 0.0.0.0` specifications are critical. 
 
 # To overrides the image’s default command, and start an interactive Bash shell inside the container
@@ -219,7 +222,7 @@ docker run -it --rm myapp:v1 python
 # To list all the dirs and files including all children dirs  
 docker run -it myapp:v1  ls -R /app
 
-# Ctrl + d ot type `exist` to exist or detach from a container
+# Ctrl + c to exist or detach from a container
 
 # To kill a running container
 docker kill <IMAGE ID>  
@@ -241,8 +244,9 @@ docker compose down
 
 ```
 ### CI/CD pipeline with GitHub Actions
- 
-
+See these following two files for details:
+- `model-deployment-example/.github/workflows/docker-actions.yaml`
+- `model-deployment-example/.github/workflows/test-actions.yaml`
 
 ## Contact
 
