@@ -12,8 +12,35 @@ fname:
 
 model:
   #_target_: LinearRegressionModel
-  test_after_training: bool
+  test_after_training: true
   train_size: 0.8
   batch_size: 100
   epochs: 100
   learning_rate: 0.01
+
+
+# or in the python script
+# config_dict = {
+#    "path": {
+#       "data_dir": "data/model_demo",
+#       "model_dir": "models/model_demo",
+#       },
+#     "fname": {
+#       "data_fname": "data_tensors.pt",
+#       "data_prep_log_fname": "data_logfile.log",
+#       "model_fname": "demo_model_weights.pth",
+#       },
+#     "model_params": {
+#       "test_after_training": True,
+#       "train_size": 0.8,
+#       "batch_size": 100,
+#       "epochs": 100,
+#       "learning_rate": 0.01,
+#       },
+#   }
+
+# cfg = OmegaConf.create(config_dict)
+# config = MetadataConfigSchema(**OmegaConf.to_container(cfg, resolve=True))
+
+
+    
