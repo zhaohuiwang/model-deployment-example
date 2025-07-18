@@ -7,24 +7,26 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Install dependencies
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          uv sync --no-dev
-      - name: Activate venv
-        run: |
-          . .venv/bin/activate
-      - name: Test with pytest
-        run: |
-          pip install pytest pytest-cov
-          pytest src/model_demo/tests/test_model.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Run tests
+        run: uv run pytest tests
+        
+      #- name: Install dependencies
+        #run: |
+        #  python -m pip install --upgrade pip
+        #  pip install -r requirements.txt
+      # - name: Test with pytest
+      #   run: |
+      #     pip install pytest pytest-cov
+      #     pytest src/model_demo/tests/test_model.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
 #  pytest tests.py: Runs tests in the tests.py file.
 #  --doctest-modules: Enables doctest discovery, running tests embedded in docstrings of Python modules.
