@@ -1,0 +1,16 @@
+# defaults is a list/array
+defaults:
+  - model: resnet
+  - dataset: imagenet
+  - __self__
+# if __self__ is the last element, all the above are preferential over the current. 
+
+model:
+  name: resnet
+  #num_layers: 18
+  pretrained: true
+
+dataset:
+  name: imagenet
+  batch_size: 32
+  shuffle: true
