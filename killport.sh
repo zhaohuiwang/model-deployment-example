@@ -20,23 +20,38 @@ check_and_kill_port() {
     # Port is in use, attempt to kill each PID
     echo "Port $PORT is in use by PID(s): $PID"
     for pid in $PID; do
-        echo "Killing process with PID $pid..."
+        echo "Attempting to kill process with PID $pid (SIGTERM)..."
         kill -TERM "$pid" 2>/dev/null
-        # Verify if process was killed
+        # Wait briefly to allow process to terminate
+        sleep 1
+        # Check if process still holds the port
         if lsof -t -i :"$PORT" >/dev/null 2>&1; then
-            echo "Failed to kill process with PID $pid on port $PORT."
+            echo "SIGTERM failed for PID $pid. Trying SIGKILL..."
+            sudo kill -KILL "$pid" 2>/dev/null
+            # Wait again and verify
+            sleep 1
+            if lsof -t -i :"$PORT" >/dev/null 2>&1; then
+                echo "Failed to kill process with PID $pid on port $PORT."
+                return 1
+            else
+                echo "Process with PID $pid on port $PORT killed successfully (SIGKILL)."
+            fi
         else
-            echo "Process with PID $pid on port $PORT killed successfully."
+            echo "Process with PID $pid on port $PORT killed successfully (SIGTERM)."
         fi
     done
+    return 0
 }
 
 # Iterate over all provided ports
+EXIT_STATUS=0
 for port in "$@"; do
     check_and_kill_port "$port"
+    # Track if any port fails to free
+    [ $? -ne 0 ] && EXIT_STATUS=1
 done
 
-exit 0
+exit $EXIT_STATUS
 
 # run in the current dir to kill port 8000
 # $ ./killport.sh 8000

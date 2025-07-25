@@ -1,3 +1,13 @@
+
+"""
+This script check and kill occupied ports. THe port number(s) is passed as arguments
+
+With a uv venv run this command
+
+uv run python killport.py 8000              # one port
+uv run python killport.py 8000 8001 8002    # multiple ports
+"""
+
 import os
 import sys
 
