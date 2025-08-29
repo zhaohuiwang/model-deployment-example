@@ -3,15 +3,52 @@ import numpy as np
 import numpy.typing as npt
 import torch
 import torch.optim as optim
+from pathlib import Path
 from logging.handlers import RotatingFileHandler
 from pydantic import BaseModel
 from typing import Iterator, List, Any, Tuple, Union
 
+def find_directory(target_dir_name="logs", start_path=None):
+    """
+    Search for the first occurrence of a directory by traversing up the parent directories.
+    
+    Parameters:
+        target_dir_name (str): Name of the directory to search for.
+        start_path (str or Path, optional): Starting directory path. Defaults to current working directory.
+    
+    Returns:
+        Path: Absolute path to the first matching directory found, or None if not found.
+    """
+    # Use current working directory if no start path is provided
+    current_path = Path(start_path).resolve() if start_path else Path.cwd()
+    
+    # Continue until we reach the root directory
+    while current_path != current_path.parent:
+        # Check if the target directory exists in current path
+        target_path = current_path / target_dir_name
+        if target_path.is_dir():
+            return target_path
+        
+        # Move up to parent directory
+        current_path = current_path.parent
+    
+    # Check the root directory
+    target_path = current_path / target_dir_name
+    if target_path.is_dir():
+        return target_path
+        
+    return None
 
 def setup_logger(logger_name: str='MyAppLogger', log_file:str='app.log', log_level=logging.DEBUG):
     """
     Create a centralized logger configuration.
     List of logging levels: DEBUG (10) > INFO (20) > WARNING (30) > ERROR (40) > CRITICAL (50)
+    Parameters:
+        logger_name (str): a user defined name for the logger
+        log_file (str): a file path to save logs.
+        log_level (logging): a selected level for logging.
+    Returns:
+        A logger object.
     """
     # Create logger
     logger = logging.getLogger(logger_name)
@@ -40,7 +77,6 @@ def setup_logger(logger_name: str='MyAppLogger', log_file:str='app.log', log_lev
         logger.addHandler(file_handler)
     
     return logger
-
 
 def get_device():
     """Get the computer Chip device """
