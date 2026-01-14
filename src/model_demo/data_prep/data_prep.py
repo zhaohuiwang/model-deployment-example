@@ -2,7 +2,6 @@ import logging
 import os
 
 import hydra
-from omegaconf import OmegaConf
 from pathlib import Path
 
 import numpy as np
@@ -38,8 +37,8 @@ cs.store(name="meta_configs", node=MetadataConfigSchema)
       config_name="config",  # configuration file name in YAML
       version_base="1.1"
       )
-def main(cfg: MetadataConfigSchema) -> None:
-    logger.info(f"\nConfiguration\n{OmegaConf.to_yaml(cfg)}") 
+def main(cfg) -> None:
+    logger.info(f"\nConfiguration\n{cfg}")
 
     ## Setup - data preparation
     # for synthesizing data following y = xW^T + bias

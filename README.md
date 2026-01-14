@@ -99,7 +99,7 @@ Here is the tree structure showing how the files are organized in my project dir
 #### Data Preparation
 There are many ways to generate a synthetic data using code in `data_prep.py`. The simple option is to run script file as a module
 ```Bash
-pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python -m src.model_demo.data_prep
+pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python3 -m src.model_demo.data_prep.data_prep
 # with the alternative specification in the script
 from src.model_demo.utils import synthesize_data, norm
 ```
@@ -114,7 +114,7 @@ from utils import synthesize_data, norm
 #### Model Training
 Similar to the data paration, either script or module mode can be executed on `model_demo.py` with or without modifications. For simplicity, I only describe the module mode here. 
 ```Bash
-pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python -m src.model_demo.models/model_demo
+pytorchzhaohuiwang@WangFamily:/mnt/e/zhaohuiwang/dev/model-deployment-example$ python -m src.model_demo.models.model_demo
 ```
 #### Model inference
 When you want to perform model inference and evaluation, you can load the model and perform model inference by executing the Python script directly (the code snippet is in the comment section in `model_demo.py`). However the limitation for this approach is that you can only use the model in the same environment where the model was trained and can not be used by many other users. For more business values, high quanlity models should be deployed and the access be granded to all possible users, with consistency promise. Next two sections are examples for two model deployment approaches: Web application via FastAPI and containerization by Docker.

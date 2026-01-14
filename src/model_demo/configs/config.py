@@ -1,4 +1,4 @@
-
+from typing import Any
 from dataclasses import dataclass, field
 from pydantic import BaseModel
 import torch.nn as nn
@@ -61,7 +61,7 @@ class MetadataConfigSchema:
     path: PathConfigSchema = field(default_factory=PathConfigSchema)
     fname: FNameConfigSchema = field(default_factory=FNameConfigSchema)
     modelparameters: ModelParametersConfigSchema = field(default_factory=ModelParametersConfigSchema)
-    modelinstance: ModelParametersConfigSchema = field(default_factory=ModelParametersConfigSchema)
+    modelinstance: Any = LinearRegressionModel
     # The modelinstance is left as a callable (class) for flexibility in dimensions when instantiated.
 
 # Pydantic is unable to generate a schema for a custom class torch.nn.Linear    
