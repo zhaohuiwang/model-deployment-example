@@ -10,8 +10,7 @@ fname:
   model_fname: demo_model_weights.pth
 
 
-model:
-  #_target_: LinearRegressionModel
+modelinstance:
   test_after_training: true
   train_size: 0.8
   batch_size: 100

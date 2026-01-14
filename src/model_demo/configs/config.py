@@ -1,8 +1,7 @@
-from typing import Any
-from dataclasses import dataclass, field
-from pydantic import BaseModel
-import torch.nn as nn
 
+from pydantic import BaseModel
+from dataclasses import dataclass, field
+import torch.nn as nn
 
 
 
@@ -26,7 +25,7 @@ class PredictionFeatures(BaseModel):
     feature_X_2: int | float
     
 class PredictionFeaturesBatch(BaseModel):
-    input_data: list[tuple[int | float]]
+    input_data: list[tuple[int | float, int | float]]
 
 @dataclass
 class ModelParametersConfigSchema:
@@ -49,20 +48,19 @@ class PathConfigSchema:
 class FNameConfigSchema:
     """ Configuration schema for file names. """
     # non-default argument should preceed default argument
-    data_fname: str = field(default="data_tensors.pt")
-    data_prep_log_fname: str = field(default="data_logfile.log")
-    model_fname: str = field(default="demo_model_weights.pth")
+    data_fname: str = "data_tensors.pt"
+    data_prep_log_fname: str = "data_logfile.log"
+    model_fname: str = "demo_model_weights.pth"
 
 @dataclass
 class MetadataConfigSchema:
     """
     Hierarchical Configurations: Configuration schema for the full training workflow including data and model configs.
     """
-    path: PathConfigSchema = field(default_factory=PathConfigSchema)
-    fname: FNameConfigSchema = field(default_factory=FNameConfigSchema)
-    modelparameters: ModelParametersConfigSchema = field(default_factory=ModelParametersConfigSchema)
-    modelinstance: Any = LinearRegressionModel
-    # The modelinstance is left as a callable (class) for flexibility in dimensions when instantiated.
+    path: PathConfigSchema = PathConfigSchema
+    fname: FNameConfigSchema = FNameConfigSchema
+    modelinstance: ModelParametersConfigSchema = ModelParametersConfigSchema
+
 
 # Pydantic is unable to generate a schema for a custom class torch.nn.Linear    
 
@@ -81,4 +79,14 @@ In practice, you will rarely define defaults with `name: type = value` syntax. I
 `name: type = Field(default=value)`
 The default_factory parameter accepts a function that returns an initial value for a data class field. It accepts any arbitratary funciton, including tuple, list, dict, set, and any user-defined custum function or lambda <arguments>  : expression
 We can add methods to data classes as we do for regular classes.
+
+Hydra's @hydra.main + structured configs require one of:
+@dataclass
+pydantic.BaseModel
+
+Pydantic cannot generate a schema for nn.Module
+Hydra structured configs must be serializable
+Callables/classes should be referenced symbolically, not stored directly
+
+
 """

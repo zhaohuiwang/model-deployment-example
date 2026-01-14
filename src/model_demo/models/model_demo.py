@@ -7,7 +7,6 @@ pydantic is used in model_demo.py configuration file config.py
 
 import logging
 from pathlib import Path
-from typing import Dict
 
 from omegaconf.dictconfig import DictConfig
 import numpy as np
@@ -16,8 +15,9 @@ import torch.nn as nn
 
 from src.model_demo.utils import load_data, infer_evaluate_model, get_device, setup_logger
 from src.model_demo.configs.config import MetadataConfigSchema
+from src.model_demo.configs.config import LinearRegressionModel as LR
 
-def get_data() -> Dict:
+def get_data() -> dict:
     """ Fetch data from the data dir """
     try:
         tensors_dict = torch.load(Path(__file__).parent.parent.parent.parent/cfg.path.data_dir/cfg.fname.data_fname)
@@ -25,7 +25,7 @@ def get_data() -> Dict:
         logger.error('Data or path not fund!')
     return tensors_dict
 
-def train(cfg: DictConfig) -> None:
+def train(model, cfg: DictConfig) -> None:
     # Step 1: Get data ready
     tensors_dict = get_data()
 
@@ -41,7 +41,8 @@ def train(cfg: DictConfig) -> None:
     output_dim = y_train.shape[-1]
 
     # Instantiate the model, the default of modelinstance in MetadataConfigSchema is an instance already not a callable 
-    model = cfg.modelinstance(input_dim, output_dim)
+    model = model(input_dim, output_dim)
+
 
     logger.info(f"Using {model} ")
 
@@ -52,7 +53,7 @@ def train(cfg: DictConfig) -> None:
 
     # Step 3: Instantiate Loss class and Optimizer class
     # learning_rate = 0.01
-    optimizer = torch.optim.SGD(model.parameters(), lr=cfg.modelparameters.learning_rate)
+    optimizer = torch.optim.SGD(model.parameters(), lr=cfg.modelinstance.learning_rate)
     criterion = nn.MSELoss()
 
     # Step 4: Train the model
@@ -60,9 +61,9 @@ def train(cfg: DictConfig) -> None:
     # epochs = 100
 
     # Data loader combines a dataset and a sampler, and provides an iterable over the given dataset.
-    data_iter = load_data((X_train, y_train), cfg.modelparameters.batch_size)
+    data_iter = load_data((X_train, y_train), cfg.modelinstance.batch_size)
 
-    for epoch in range(cfg.modelparameters.epochs):
+    for epoch in range(cfg.modelinstance.epochs):
         epoch += 1 # Logging starts at 1 instead of 0
         for X, y in data_iter:
             X = X.to(device)
@@ -97,13 +98,13 @@ if __name__ == "__main__":
     logger = setup_logger(logger_name=__name__, log_file=Path(__file__).parent.parent.parent.parent/cfg.path.data_dir/"api_logfile.log")
 
     try:
-        model = train(cfg)
+        model = train(LR, cfg)
         logger.info("Model training accomplished.")
     except Exception as e:
         logging.error(f"An error occurred during training: {e}", exc_info=True)
 
 
-    if cfg.modelparameters.test_after_training:
+    if cfg.modelinstance.test_after_training:
         logger.info("Starting the model-demo inference")
 
         # Set model to evaluation mode
@@ -116,7 +117,7 @@ if __name__ == "__main__":
         X_test = tensors_dict['X_test'].to(device)
         y_test = tensors_dict['y_test'].to(device)
 
-        test_data_iter = load_data((X_test, y_test), cfg.modelparameters.batch_size, is_train=False)
+        test_data_iter = load_data((X_test, y_test), cfg.modelinstance.batch_size, is_train=False)
 
         # Perform inference
         predictions, avg_loss = infer_evaluate_model(model, test_data_iter, nn.MSELoss())

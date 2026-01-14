@@ -20,6 +20,7 @@ import torch
 import uvicorn
 
 from src.model_demo.configs.config import MetadataConfigSchema
+from src.model_demo.configs.config import LinearRegressionModel as LR
 from src.model_demo.utils import PredictionFeatures, PredictionFeaturesBatch, infer_model, setup_logger, get_device
 
 cfg = MetadataConfigSchema()
@@ -47,7 +48,7 @@ logger.info(f"Running at: {Path.cwd()}")
 
 
 # create an instance of the same model first
-model = cfg.modelinstance(2,1)
+model = LR(2,1)
 
 # Load the trained model weights, weights_only=True as a best practice.
 try:

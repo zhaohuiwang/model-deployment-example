@@ -2,6 +2,7 @@ import logging
 import os
 
 import hydra
+from omegaconf import OmegaConf
 from pathlib import Path
 
 import numpy as np
@@ -37,8 +38,8 @@ cs.store(name="meta_configs", node=MetadataConfigSchema)
       config_name="config",  # configuration file name in YAML
       version_base="1.1"
       )
-def main(cfg) -> None:
-    logger.info(f"\nConfiguration\n{cfg}")
+def main(cfg: MetadataConfigSchema) -> None:
+    logger.info(f"\nConfiguration\n{OmegaConf.to_yaml(cfg)}") 
 
     ## Setup - data preparation
     # for synthesizing data following y = xW^T + bias
@@ -47,7 +48,9 @@ def main(cfg) -> None:
 
     X, y = synthesize_data(true_w, true_b, 1000)
 
-    size = int(X.shape[-2]*cfg.model.train_size)
+    print(cfg, type(cfg))
+
+    size = int(X.shape[-2]*cfg.modelinstance.train_size)
 
     # np.random.choice() generates a random sample from a given 1D array. here is is sampling size/total_size 
     index = np.random.choice(X.shape[-2], size=size, replace=False) 
