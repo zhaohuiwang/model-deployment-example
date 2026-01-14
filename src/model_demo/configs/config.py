@@ -1,10 +1,8 @@
 
-from typing import Iterator, List, Any, Tuple, Union
-
-# from dataclasses import dataclass, field
-from pydantic import BaseModel, ConfigDict
-from pydantic.dataclasses import dataclass, Field
+from dataclasses import dataclass, field
+from pydantic import BaseModel
 import torch.nn as nn
+
 
 
 
@@ -24,14 +22,14 @@ class LinearRegressionModel(nn.Module):
 
 class PredictionFeatures(BaseModel):
     """ Define the request body format for predictions """
-    feature_X_1: Union[int, float]
-    feature_X_2: Union[int, float]
+    feature_X_1: int | float
+    feature_X_2: int | float
     
 class PredictionFeaturesBatch(BaseModel):
-    input_data: List[Tuple[Union[int, float], Union[int, float]]]
+    input_data: list[tuple[int | float]]
 
-
-class ModelParametersConfigSchema(BaseModel):
+@dataclass
+class ModelParametersConfigSchema:
     """ Configuration schema for the model training parameters. """
     test_after_training: bool =True
     train_size: float = 0.8
@@ -51,19 +49,19 @@ class PathConfigSchema:
 class FNameConfigSchema:
     """ Configuration schema for file names. """
     # non-default argument should preceed default argument
-    data_fname: str = Field(default="data_tensors.pt")
-    data_prep_log_fname: str = Field(default="data_logfile.log")
-    model_fname: str = Field(default="demo_model_weights.pth")
+    data_fname: str = field(default="data_tensors.pt")
+    data_prep_log_fname: str = field(default="data_logfile.log")
+    model_fname: str = field(default="demo_model_weights.pth")
 
-
+@dataclass
 class MetadataConfigSchema:
     """
     Hierarchical Configurations: Configuration schema for the full training workflow including data and model configs.
     """
-    path: PathConfigSchema = PathConfigSchema()
-    fname: FNameConfigSchema = FNameConfigSchema()
-    modelparameters: ModelParametersConfigSchema = ModelParametersConfigSchema()
-    modelinstance: LinearRegressionModel = LinearRegressionModel
+    path: PathConfigSchema = field(default_factory=PathConfigSchema)
+    fname: FNameConfigSchema = field(default_factory=FNameConfigSchema)
+    modelparameters: ModelParametersConfigSchema = field(default_factory=ModelParametersConfigSchema)
+    modelinstance: ModelParametersConfigSchema = field(default_factory=ModelParametersConfigSchema)
     # The modelinstance is left as a callable (class) for flexibility in dimensions when instantiated.
 
 # Pydantic is unable to generate a schema for a custom class torch.nn.Linear    
